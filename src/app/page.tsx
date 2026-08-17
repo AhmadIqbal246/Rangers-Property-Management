@@ -6,6 +6,9 @@ import { RevealLayer } from '@/components/RevealLayer';
 import DepthCarousel from '@/components/DepthCarousel';
 import DarkVeil from '@/components/DarkVeil';
 import FoldText from '@/components/FoldText';
+import { ServicesSection } from '@/components/ServicesSection';
+import { ContactSection } from '@/components/ContactSection';
+import { FooterSection } from '@/components/FooterSection';
 
 const BG_IMAGE_1 = '/images/estate_twilight.png';
 const BG_IMAGE_2 = '/images/estate_interior.png';
@@ -67,9 +70,13 @@ export default function Home() {
     };
     const updatePosition = () => {
       if (mouseRef.current.x !== -999) {
-        smoothRef.current.x += (mouseRef.current.x - smoothRef.current.x) * 0.1;
-        smoothRef.current.y += (mouseRef.current.y - smoothRef.current.y) * 0.1;
-        setCursorPos({ x: smoothRef.current.x, y: smoothRef.current.y });
+        const dx = mouseRef.current.x - smoothRef.current.x;
+        const dy = mouseRef.current.y - smoothRef.current.y;
+        if (Math.abs(dx) > 0.2 || Math.abs(dy) > 0.2) {
+          smoothRef.current.x += dx * 0.1;
+          smoothRef.current.y += dy * 0.1;
+          setCursorPos({ x: Math.round(smoothRef.current.x), y: Math.round(smoothRef.current.y) });
+        }
       }
       rafRef.current = requestAnimationFrame(updatePosition);
     };
@@ -95,9 +102,20 @@ export default function Home() {
 
     const handleWheel = (e: WheelEvent) => {
       if (isTransitioningRef.current) return;
-      if (e.deltaY > 35 && activeSection < 3) {
+      if (e.deltaY > 35 && activeSection < 6) {
+        if (activeSection === 4) {
+          const scroller = document.querySelector('.scroll-stack-inner')?.parentElement;
+          if (scroller) {
+            const isAtBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 15;
+            if (!isAtBottom) return;
+          }
+        }
         changeSection(activeSection + 1);
       } else if (e.deltaY < -35 && activeSection > 0) {
+        if (activeSection === 4) {
+          const scroller = document.querySelector('.scroll-stack-inner')?.parentElement;
+          if (scroller && scroller.scrollTop > 10) return;
+        }
         changeSection(activeSection - 1);
       }
     };
@@ -110,18 +128,40 @@ export default function Home() {
       if (isTransitioningRef.current) return;
       const touchEndY = e.changedTouches[0].clientY;
       const diffY = touchStartY.current - touchEndY;
-      if (diffY > 40 && activeSection < 3) {
+      if (diffY > 40 && activeSection < 6) {
+        if (activeSection === 4) {
+          const scroller = document.querySelector('.scroll-stack-inner')?.parentElement;
+          if (scroller) {
+            const isAtBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 15;
+            if (!isAtBottom) return;
+          }
+        }
         changeSection(activeSection + 1);
       } else if (diffY < -40 && activeSection > 0) {
+        if (activeSection === 4) {
+          const scroller = document.querySelector('.scroll-stack-inner')?.parentElement;
+          if (scroller && scroller.scrollTop > 10) return;
+        }
         changeSection(activeSection - 1);
       }
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isTransitioningRef.current) return;
-      if ((e.key === 'ArrowDown' || e.key === 'PageDown') && activeSection < 3) {
+      if ((e.key === 'ArrowDown' || e.key === 'PageDown') && activeSection < 6) {
+        if (activeSection === 4) {
+          const scroller = document.querySelector('.scroll-stack-inner')?.parentElement;
+          if (scroller) {
+            const isAtBottom = scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 15;
+            if (!isAtBottom) return;
+          }
+        }
         changeSection(activeSection + 1);
       } else if ((e.key === 'ArrowUp' || e.key === 'PageUp') && activeSection > 0) {
+        if (activeSection === 4) {
+          const scroller = document.querySelector('.scroll-stack-inner')?.parentElement;
+          if (scroller && scroller.scrollTop > 10) return;
+        }
         changeSection(activeSection - 1);
       }
     };
@@ -144,11 +184,11 @@ export default function Home() {
       className="relative w-full h-screen bg-black overflow-hidden tracking-[-0.02em] select-none"
       style={{ height: '100dvh', fontFamily: "'Inter', sans-serif" }}
     >
-      <Navigation />
+      <Navigation activeSection={activeSection} onNavigateToSection={(idx) => setActiveSection(idx)} />
 
       {/* Floating Section Indicators */}
       <div className="fixed right-6 top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-3 items-center">
-        {[0, 1, 2, 3].map((idx) => (
+        {[0, 1, 2, 3, 4, 5, 6].map((idx) => (
           <button
             key={idx}
             onClick={() => setActiveSection(idx)}
@@ -352,6 +392,8 @@ export default function Home() {
         className={`fixed inset-0 w-full h-screen bg-black text-white py-12 sm:py-16 px-6 sm:px-12 md:px-20 flex items-center justify-center overflow-y-auto md:overflow-hidden transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_-30px_60px_rgba(0,0,0,0.95)] border-t border-white/15 ${
           activeSection === 3
             ? 'translate-y-0 opacity-100 pointer-events-auto z-40'
+            : activeSection > 3
+            ? 'opacity-40 scale-95 translate-y-0 pointer-events-none z-10 blur-[4px]'
             : 'translate-y-[100dvh] opacity-100 pointer-events-none z-40'
         }`}
         style={{ height: '100dvh' }}
@@ -438,6 +480,46 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Section 4: Core Services & Management Pillars */}
+      <section
+        className={`fixed inset-0 w-full h-screen bg-black transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_-30px_60px_rgba(0,0,0,0.95)] border-t border-white/15 ${
+          activeSection === 4
+            ? 'translate-y-0 opacity-100 pointer-events-auto z-50'
+            : activeSection > 4
+            ? 'opacity-40 scale-95 translate-y-0 pointer-events-none z-10 blur-[4px]'
+            : 'translate-y-[100dvh] opacity-100 pointer-events-none z-50'
+        }`}
+        style={{ height: '100dvh' }}
+      >
+        <ServicesSection />
+      </section>
+
+      {/* Section 5: Contact Portal */}
+      <section
+        className={`fixed inset-0 w-full h-screen bg-black transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_-30px_60px_rgba(0,0,0,0.95)] border-t border-white/15 ${
+          activeSection === 5
+            ? 'translate-y-0 opacity-100 pointer-events-auto z-[60]'
+            : activeSection > 5
+            ? 'opacity-40 scale-95 translate-y-0 pointer-events-none z-10 blur-[4px]'
+            : 'translate-y-[100dvh] opacity-100 pointer-events-none z-[60]'
+        }`}
+        style={{ height: '100dvh' }}
+      >
+        <ContactSection isActive={activeSection === 5} />
+      </section>
+
+      {/* Section 6: Owner FAQ & Luxury Footer */}
+      <section
+        className={`fixed inset-0 w-full h-screen bg-black transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] shadow-[0_-30px_60px_rgba(0,0,0,0.95)] border-t border-white/15 ${
+          activeSection === 6
+            ? 'translate-y-0 opacity-100 pointer-events-auto z-[70]'
+            : 'translate-y-[100dvh] opacity-100 pointer-events-none z-[70]'
+        }`}
+        style={{ height: '100dvh' }}
+      >
+        <FooterSection onNavigateToSection={(idx) => setActiveSection(idx)} isActive={activeSection === 6} />
       </section>
     </main>
   );
