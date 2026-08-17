@@ -94,6 +94,7 @@ export interface DarkVeilProps {
   scanlineFrequency?: number;
   warpAmount?: number;
   resolutionScale?: number;
+  isActive?: boolean;
 }
 
 export default function DarkVeil({
@@ -103,11 +104,13 @@ export default function DarkVeil({
   speed = 0.4,
   scanlineFrequency = 0,
   warpAmount = 0.2,
-  resolutionScale = 1
+  resolutionScale = 1,
+  isActive = true
 }: DarkVeilProps) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
+    if (!isActive) return;
     const canvas = ref.current as HTMLCanvasElement;
     if (!canvas) return;
     const parent = canvas.parentElement as HTMLElement;
@@ -168,7 +171,7 @@ export default function DarkVeil({
       cancelAnimationFrame(frame);
       window.removeEventListener('resize', resize);
     };
-  }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale]);
+  }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale, isActive]);
 
   return <canvas ref={ref} className="w-full h-full block" />;
 }

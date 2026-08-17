@@ -56,7 +56,11 @@ const services = [
   }
 ];
 
-export function ServicesSection() {
+interface ServicesSectionProps {
+  isActive?: boolean;
+}
+
+export function ServicesSection({ isActive = true }: ServicesSectionProps) {
   return (
     <div className="w-full h-full relative text-white flex flex-col justify-start">
       <div className="absolute top-20 sm:top-24 left-1/2 -translate-x-1/2 z-20 text-center px-4 w-full max-w-3xl">
@@ -74,6 +78,7 @@ export function ServicesSection() {
           scaleEndPosition="12%"
           baseScale={0.86}
           blurAmount={3}
+          isActive={isActive}
         >
           {services.map((service) => {
             const Icon = service.icon;

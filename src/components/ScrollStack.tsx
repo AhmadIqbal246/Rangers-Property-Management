@@ -41,6 +41,7 @@ interface ScrollStackProps {
   blurAmount?: number;
   useWindowScroll?: boolean;
   onStackComplete?: () => void;
+  isActive?: boolean;
 }
 
 const ScrollStack: FC<ScrollStackProps> = ({
@@ -55,7 +56,8 @@ const ScrollStack: FC<ScrollStackProps> = ({
   rotationAmount = 0,
   blurAmount = 0,
   useWindowScroll = false,
-  onStackComplete
+  onStackComplete,
+  isActive = true
 }) => {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const stackCompletedRef = useRef(false);
@@ -268,6 +270,9 @@ const ScrollStack: FC<ScrollStackProps> = ({
       card.style.perspective = '1000px';
       card.style.webkitPerspective = '1000px';
     });
+
+    if (!isActive) return;
+
     setupLenis();
     updateCardTransforms();
     return () => {
@@ -294,8 +299,8 @@ const ScrollStack: FC<ScrollStackProps> = ({
     useWindowScroll,
     onStackComplete,
     setupLenis,
-    updateCardTransforms
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    updateCardTransforms,
+    isActive
   ]);
 
   const containerStyles = useWindowScroll

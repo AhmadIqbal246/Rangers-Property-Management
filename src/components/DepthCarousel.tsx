@@ -35,6 +35,7 @@ export interface DepthCarouselProps {
   showIndicators?: boolean;
   onChange?: (index: number, item: DepthCarouselItem) => void;
   className?: string;
+  isActive?: boolean;
 }
 
 const DEFAULT_ITEMS: DepthCarouselItem[] = [
@@ -72,7 +73,8 @@ export default function DepthCarousel({
   showControls = true,
   showIndicators = true,
   onChange,
-  className = ''
+  className = '',
+  isActive = true
 }: DepthCarouselProps) {
   const data = useMemo(() => (Array.isArray(items) ? items : []).map(normalizeItem), [items]);
   const count = data.length;
@@ -327,7 +329,7 @@ export default function DepthCarousel({
 
   useEffect(() => {
     reducedRef.current = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (!autoplay || reducedRef.current || count < 2) return;
+    if (!autoplay || !isActive || reducedRef.current || count < 2) return;
     const root = rootRef.current;
     let hovered = false;
     let focused = false;
