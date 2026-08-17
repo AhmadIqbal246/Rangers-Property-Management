@@ -11,6 +11,7 @@ import { ContactSection } from '@/components/ContactSection';
 import { FooterSection } from '@/components/FooterSection';
 import { JohnChaseSection } from '@/components/JohnChaseSection';
 import { JamesStinnettSection } from '@/components/JamesStinnettSection';
+import { SplashOverlay } from '@/components/SplashOverlay';
 
 const BG_IMAGE_1 = '/images/estate_twilight.png';
 const BG_IMAGE_2 = '/images/estate_interior.png';
@@ -190,6 +191,7 @@ export default function Home() {
       className="relative w-full h-screen bg-black overflow-hidden tracking-[-0.02em] select-none"
       style={{ height: '100dvh', fontFamily: "'Inter', sans-serif" }}
     >
+      <SplashOverlay />
       <Navigation activeSection={activeSection} onNavigateToSection={(idx) => setActiveSection(idx)} />
 
       {/* Floating Section Indicators */}
